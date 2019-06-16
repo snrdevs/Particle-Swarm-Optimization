@@ -31,19 +31,22 @@ TAUMAX = 13600;                                                                 
 SIGMAX = 30000;                                                                 % Max Allowed Bending Stress
 DELTMAX = 0.25;                                                                 % Max Allowed Tip Perfection
 
-M = @(x) P*(L+x(2)/2);                                                          % Bending Moment at Welding Point
-R = @(x) sqrt((x(2)^2)/4+((x(1)+x(3))/2)^2);                                    % Constant
-J = @(x) 2*(sqrt(2)*x(1)*x(2)*((x(2)^2)/12+((x(1)+x(3))/2)^2));                 % Polar Moment of Inertia
 
-objective_function = @(x) 1.10471*x(1)^2*x(2)+0.04811*x(3)*x(4)*(14+x(2));      % Objective Function f(x)
-sigma = @(x) (6*P*L)/(x(4)*x(3)^2);                                             % Bending Stress
-delta = @(x) (4*P*L^3)/(E*x(4)*x(3)^3);                                         % Tip Deflection
+
+M = @(x) P*(L+x(2)/2);      % Bending Moment at Welding Point
+R = @(x) sqrt((x(2)^2)/4+((x(1)+x(3))/2)^2); % Constant
+J = @(x) 2*(sqrt(2)*x(1)*x(2)*((x(2)^2)/12+((x(1)+x(3))/2)^2)); % Polar Moment of Inertia
+
+objective_function = @(x) 1.10471*x(1)^2*x(2)+0.04811*x(3)*x(4)*(14+x(2)); % Objective Function f(x)
+sigma = @(x) (6*P*L)/(x(4)*x(3)^2); % Bending Stress
+delta = @(x) (4*P*L^3)/(E*x(4)*x(3)^3); % Tip Deflection
 
 Pc = @(x) 4.013*E*sqrt((x(3)^2*x(4)^6)/36)*(1-x(3)*sqrt(E/(4*G))/(2*L))/(L^2);  % Buckling Load
 tau_p = @(x) P/(sqrt(2)*x(1)*x(2));                                             % Tau_prime
 tau_pp = @(x) (M(x)*R(x))/J(x);                                                 % Tau_double_prime
 tau = @(x) sqrt(tau_p(x)^2+2*tau_p(x)*tau_pp(x)*x(2)/(2*R(x))+tau_pp(x)^2);     % Tau (Shear Stress) 
 
+% Constraints
 g1 = @(x) tau(x)-TAUMAX;                                                    
 g2 = @(x) sigma(x)-SIGMAX;                                                  
 g3 = @(x) x(1)-x(4); 
@@ -54,7 +57,7 @@ g7 = @(x) P-Pc(x);
 
 penalty_function = @(x) objective_function(x) + PCONST*(max(0,g1(x))^2+max(0,g2(x))^2+max(0,g3(x))^2+...
     +max(0,g4(x))^2+max(0,g5(x))^2+...
-    max(0,g6(x))^2+max(0,g7(x))^2);                                             % Penalty Function
+    max(0,g6(x))^2+max(0,g7(x))^2); % Penalty Function
 %% PSO Initialize Particles' Positions & Velocities
 for i = 1:swarm_size
     for j = 1:no_design_variable
@@ -74,12 +77,12 @@ while iter < iter_max
     iter = iter + 1;
     for i = 1:swarm_size
         obj_fun_val_particle(i) = penalty_function(particle_position{i});
-        if obj_fun_val_particle(i) < particle_best_objective(i) & obj_fun_val_particle(i) >= 0  % Best Local
+        if obj_fun_val_particle(i) < particle_best_objective(i) && obj_fun_val_particle(i) >= 0  % Best Local
             particle_best{i} = particle_position{i};
             particle_best_objective(i) = obj_fun_val_particle(i);
         end
     end
-    if min(obj_fun_val_particle) < global_best_objective & min(obj_fun_val_particle) >= 0       % Best Global
+    if min(obj_fun_val_particle) < global_best_objective && min(obj_fun_val_particle) >= 0       % Best Global
         global_best = particle_position{obj_fun_val_particle == min(obj_fun_val_particle)};
         global_best_objective = min(obj_fun_val_particle);
     end
