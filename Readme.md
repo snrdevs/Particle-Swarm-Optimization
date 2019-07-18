@@ -6,6 +6,8 @@
 
 Particle Swarm Optimization (PSO) is a computational method that optimizes a problem by iteratively trying to improve a candidate solution with regard to a given measure of quality. It solves a problem by having a population of candidate solutions (particles), and moving these particles around in the search-space according to simple mathematical formulae over the particle's position and velocity. Each particle's movement is influenced by its local best-known position, but is also guided toward the best-known positions in the search-space, which are updated as better positions are found by other particles. This is expected to move the swarm toward the best solutions.
 
+In this study, there were four engineering optimization problems to solve with PSO. The MATLAB algorithms and code implementations are shared in this repository.  
+
 As you see in the Fig.1. the **x** shows the where the particles are. These are our solutions in search space. Then the **arrows** in figure are velocities of each particle. 
 
 # 2. The Algorithm 
